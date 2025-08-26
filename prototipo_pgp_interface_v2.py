@@ -93,14 +93,6 @@ def save_encrypted_txt():
             file.write(encrypted)
         messagebox.showinfo("Sucesso", f"Mensagem criptografada salva em:\n{filepath}")
 
-def import_encrypted_txt():
-    """Carrega um arquivo TXT criptografado para tentar descriptografar."""
-    filepath = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
-    if filepath:
-        with open(filepath, "r", encoding="utf-8") as file:
-            content = file.read().strip()
-            output_encrypted.set(content)
-
 # Interface principal
 root = tk.Tk()
 root.title("Protótipo PGP - Criptografia Didática")
