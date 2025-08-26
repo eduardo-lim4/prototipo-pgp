@@ -56,7 +56,9 @@ noções de integridade de dados.
 3. No terminal, execute o arquivo desejado:
 
 python prototipo_pgp.py # Versão Terminal
+
 python prototipo_pgp_interface.py # Versão Gráfica Inicial
+
 python prototipo_pgp_interface_v2.py  # Versão gráfica com verificador de integridade e suporte a arquivos
 
 ---
