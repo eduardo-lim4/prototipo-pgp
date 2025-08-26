@@ -1,4 +1,6 @@
-import tkinter as tk
+from ttkbootstrap import Style
+from ttkbootstrap.constants import *
+import ttkbootstrap as ttk
 from tkinter import messagebox, filedialog
 import secrets
 import string
@@ -77,7 +79,7 @@ def import_txt():
     if filepath:
         with open(filepath, "r", encoding="utf-8") as file:
             content = file.read().strip()
-            entry_message.delete(0, tk.END)
+            entry_message.delete(0, ttk.END)
             entry_message.insert(0, content)
 
 def save_encrypted_txt():
@@ -93,49 +95,54 @@ def save_encrypted_txt():
             file.write(encrypted)
         messagebox.showinfo("Sucesso", f"Mensagem criptografada salva em:\n{filepath}")
 
-# Interface principal
-root = tk.Tk()
+# Interface principal com tema escuro
+style = Style(theme="darkly")
+root = style.master
 root.title("Protótipo PGP - Criptografia Didática")
-original_message = tk.StringVar()
+original_message = ttk.StringVar()
 
 # Mensagem
-tk.Label(root, text="Digite sua mensagem (máx. 128 caracteres):").pack()
-entry_message = tk.Entry(root, width=50)
+ttk.Label(root, text="Digite sua mensagem (máx. 128 caracteres):").pack(pady=5)
+entry_message = ttk.Entry(root, width=50)
 entry_message.pack()
 
 # Botões de arquivo
-frame_files = tk.Frame(root)
-frame_files.pack(pady=5)
-tk.Button(frame_files, text="Importar TXT", command=import_txt).grid(row=0, column=0, padx=5)
-tk.Button(frame_files, text="Salvar Criptografia em TXT", command=save_encrypted_txt).grid(row=0, column=1, padx=5)
-tk.Button(frame_files, text="Importar TXT Criptografado", command=import_encrypted_txt).grid(row=0, column=2, padx=5)
+frame_files = ttk.Frame(root)
+frame_files.pack(pady=10)
+ttk.Button(frame_files, text="Importar TXT", command=import_txt, bootstyle="info-outline").grid(row=0, column=0, padx=5)
+ttk.Button(frame_files, text="Salvar Criptografia em TXT", command=save_encrypted_txt, bootstyle="info-outline").grid(row=0, column=1, padx=5)
 
-# Botão criptografar
-tk.Button(root, text="Criptografar", command=encrypt_message).pack(pady=5)
+
+# Botão criptografar    
+ttk.Button(root, text="Criptografar", command=encrypt_message, bootstyle="sucess").pack(pady=10)
 
 # Resultados
-output_encrypted = tk.StringVar()
-output_public = tk.StringVar()
-output_private = tk.StringVar()
+output_encrypted = ttk.StringVar()
+output_public = ttk.StringVar()
+output_private = ttk.StringVar()
 
-tk.Label(root, text="Mensagem Criptografada:").pack()
-tk.Entry(root, textvariable=output_encrypted, width=50, state="readonly").pack()
+ttk.Label(root, text="Mensagem Criptografada:").pack()
+ttk.Entry(root, textvariable=output_encrypted, width=50, state="readonly").pack()
 
-tk.Label(root, text="Chave Pública:").pack()
-tk.Entry(root, textvariable=output_public, width=50, state="readonly").pack()
+ttk.Label(root, text="Chave Pública:").pack()
+entry_public = ttk.Entry(root, textvariable=output_public, width=50, state="normal")
+entry_public.pack()
+entry_public.bind("<Key>", lambda e: "break")
 
-tk.Label(root, text="Chave Privada:").pack()
-tk.Entry(root, textvariable=output_private, width=50, state="readonly").pack()
+ttk.Label(root, text="Chave Privada:").pack()
+entry_private = ttk.Entry(root, textvariable=output_private, width=50, state="normal")
+entry_private.pack()
+entry_private.bind("<Key>", lambda e: "break")
 
 # Campo chave privada
-tk.Label(root, text="Digite a chave privada para descriptografar:").pack()
-entry_key = tk.Entry(root, width=50)
+ttk.Label(root, text="Digite a chave privada para descriptografar:").pack()
+entry_key = ttk.Entry(root, width=50)
 entry_key.pack()
 
 # Botão descriptografar
-tk.Button(root, text="Descriptografar", command=decrypt_message).pack(pady=5)
+ttk.Button(root, text="Descriptografar", command=decrypt_message, bootstyle="warning").pack(pady=10)
 
 # Botão sair
-tk.Button(root, text="Sair", command=root.quit).pack(pady=5)
+ttk.Button(root, text="Sair", command=root.quit, bootstyle="danger").pack(pady=5)
 
 root.mainloop()
