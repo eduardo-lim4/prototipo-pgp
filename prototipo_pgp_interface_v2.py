@@ -108,6 +108,7 @@ frame_files = tk.Frame(root)
 frame_files.pack(pady=5)
 tk.Button(frame_files, text="Importar TXT", command=import_txt).grid(row=0, column=0, padx=5)
 tk.Button(frame_files, text="Salvar Criptografia em TXT", command=save_encrypted_txt).grid(row=0, column=1, padx=5)
+tk.Button(frame_files, text="Importar TXT Criptografado", command=import_encrypted_txt).grid(row=0, column=2, padx=5)
 
 # Botão criptografar
 tk.Button(root, text="Criptografar", command=encrypt_message).pack(pady=5)
