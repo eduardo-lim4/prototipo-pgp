@@ -1,3 +1,4 @@
+# Importação de bibliotecas
 from ttkbootstrap import Style
 from ttkbootstrap.constants import *
 import ttkbootstrap as ttk
@@ -9,11 +10,12 @@ import hashlib
 # Alfabeto usado para gerar criptografia falsa
 ALPHABET = string.ascii_letters + string.digits + string.punctuation
 
-# Chaves e dados globais
+# Variáveis globais para armazenar as chaves e o hash da mensagem original
 PUBLIC_KEY = None
 PRIVATE_KEY = None
 original_hash = None
 
+# ---- Funções de Lógica Criptográfica ----
 def generate_keys():
     """Gera um par de chaves aleatórias."""
     alphabet = string.ascii_letters + string.digits
@@ -36,7 +38,9 @@ def fake_decrypt(ciphertext: str, key: str, original: str) -> str:
     else:
         return "Chave privada inválida!"
 
+# ---- Funções de Interface e Ação ----
 def encrypt_message():
+    """Executa a criptografia da mensagem digitada e atualiza os campos da interface."""
     global PUBLIC_KEY, PRIVATE_KEY, original_hash
 
     msg = entry_message.get()
@@ -51,12 +55,14 @@ def encrypt_message():
     encrypted = fake_encrypt(msg)
     original_message.set(msg)
     original_hash = generate_hash(msg)
+    output_hash.set(original_hash)
 
     output_encrypted.set(encrypted)
     output_public.set(PUBLIC_KEY)
     output_private.set(PRIVATE_KEY)
 
 def decrypt_message():
+    """Executa a tentativa de descriptografia e verifica a integridade da mensagem."""
     key = entry_key.get()
     if not key:
         messagebox.showwarning("Aviso", "Digite a chave privada para descriptografar!")
@@ -95,46 +101,67 @@ def save_encrypted_txt():
             file.write(encrypted)
         messagebox.showinfo("Sucesso", f"Mensagem criptografada salva em:\n{filepath}")
 
-# Interface principal com tema escuro
+# ---- Interface Gráfica com ttkbootstrap ----
+
+# Inicializa a Interface com um tema escuro
 style = Style(theme="darkly")
 root = style.master
-root.title("Protótipo PGP - Criptografia Didática")
+root.title("Protótipo PGP - Criptografia Simulada")
+
+# Variável para armazenar a mensagem original
 original_message = ttk.StringVar()
 
-# Mensagem
+# Campo de entrada para a mensagem
 ttk.Label(root, text="Digite sua mensagem (máx. 128 caracteres):").pack(pady=5)
 entry_message = ttk.Entry(root, width=50)
 entry_message.pack()
 
-# Botões de arquivo
+# Botões para importar e salvar arquivos .txt
 frame_files = ttk.Frame(root)
 frame_files.pack(pady=10)
 ttk.Button(frame_files, text="Importar TXT", command=import_txt, bootstyle="info-outline").grid(row=0, column=0, padx=5)
 ttk.Button(frame_files, text="Salvar Criptografia em TXT", command=save_encrypted_txt, bootstyle="info-outline").grid(row=0, column=1, padx=5)
 
 
-# Botão criptografar    
+# Botão para criptografar a mensagem
 ttk.Button(root, text="Criptografar", command=encrypt_message, bootstyle="sucess").pack(pady=10)
 
-# Resultados
+# Variáveis para exibir os resultados
 output_encrypted = ttk.StringVar()
 output_public = ttk.StringVar()
 output_private = ttk.StringVar()
+output_hash = ttk.StringVar()
 
+# Campo da mensagem criptografada (somente leitura)
 ttk.Label(root, text="Mensagem Criptografada:").pack()
 ttk.Entry(root, textvariable=output_encrypted, width=50, state="readonly").pack()
 
+# Campo da chave pública (copiável para melhor eficiência, mas não é permitido editar o conteúdo)
 ttk.Label(root, text="Chave Pública:").pack()
 entry_public = ttk.Entry(root, textvariable=output_public, width=50, state="normal")
 entry_public.pack()
 entry_public.bind("<Key>", lambda e: "break")
 
+# Função para bloquear edição mas permitir copiar/colar
+def bloquear_edicao(event):
+    # Permite Ctrl+C, Ctrl+X, Ctrl+V, Ctrl+A
+    if event.state & 0x4 and event.keysym.lower() in ["c", "x", "v", "a"]:
+        return
+    return "break"
+
+# Campo da chave privada (copiável para melhor eficiência, mas não é permitido editar o conteúdo)
 ttk.Label(root, text="Chave Privada:").pack()
 entry_private = ttk.Entry(root, textvariable=output_private, width=50, state="normal")
 entry_private.pack()
-entry_private.bind("<Key>", lambda e: "break")
+entry_private.bind("<Key>", bloquear_edicao)
 
-# Campo chave privada
+# Campo do Hash SHA-256 da mensagem original
+ttk.Label(root, text="Hash SHA-256 da Mensagem:").pack()
+entry_hash = ttk.Entry(root, textvariable=output_hash, width=50, state="normal")
+entry_hash.pack()
+entry_hash.bind("<Key>", bloquear_edicao)
+
+# Campo para digitar a chave privada e tentar descriptografar
 ttk.Label(root, text="Digite a chave privada para descriptografar:").pack()
 entry_key = ttk.Entry(root, width=50)
 entry_key.pack()
@@ -145,4 +172,7 @@ ttk.Button(root, text="Descriptografar", command=decrypt_message, bootstyle="war
 # Botão sair
 ttk.Button(root, text="Sair", command=root.quit, bootstyle="danger").pack(pady=5)
 
+# Inicia o loop principal da interface
 root.mainloop()
+
+
